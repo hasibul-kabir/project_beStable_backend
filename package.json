@@ -1,0 +1,25 @@
+{
+  "name": "bestable_backend",
+  "version": "1.0.0",
+  "description": "backend of my project",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Hasibul Kabir",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^5.0.1",
+    "cors": "^2.8.5",
+    "dotenv": "^10.0.0",
+    "express": "^4.17.1",
+    "express-async-errors": "^3.1.1",
+    "formidable": "^1.2.2",
+    "joi": "^17.4.2",
+    "jsonwebtoken": "^8.5.1",
+    "lodash": "^4.17.21",
+    "mongoose": "^6.0.11",
+    "morgan": "^1.10.0"
+  }
+}
