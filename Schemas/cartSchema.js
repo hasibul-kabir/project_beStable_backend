@@ -10,6 +10,12 @@ const cartSchema = mongoose.Schema({
         required: true
     },
     price: Number,
+    count: {
+        type: Number,
+        default: 1,
+        min: 1,
+        max: 5
+    },
     user: {
         type: mongoose.Types.ObjectId,
         ref: 'User',

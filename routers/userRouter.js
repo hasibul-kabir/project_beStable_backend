@@ -22,7 +22,7 @@ router.route('/signup')
             if (!user) {
                 const salt = bcrypt.genSaltSync(10);
                 const hashedPass = await bcrypt.hash(req.body.password, salt);//hashing password
-
+                //console.log(req.body);
                 const newUser = new User({
                     name: req.body.name,
                     email: req.body.email,

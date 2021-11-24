@@ -17,22 +17,36 @@ const cartItem = mongoose.model('Cart', cartSchema);
 
 router.route('/')
     .post(authenticated, async (req, res) => {
-        const item = await cartItem.findOne({
-            user: req.user._id,
-            service: req.body.service
-        })
-        if (item) return res.status(400).send('This item is alraedy exists in cart!');
-        const newCartItem = new cartItem({
-            price: req.body.price,
-            service: req.body.service,
-            user: req.user._id
-        });
+        let { price, service } = _.pick(req.body, ["price", "service", "user"]);
+        try {
+            const item = await cartItem.findOne({
+                user: req.body.user,
+                service: req.body.service
+                // service: req.service._id
+            });
+            if (!item) {
+                let newCartItem = new cartItem({
+                    price: price,
+                    service: service,
+                    // service: req.service,
+                    user: req.body.user
+                    // user: user
+                });
 
-        const result = await newCartItem.save();
-        res.status(200).send({
-            messge: "Item added to cart successfully!",
-            data: result
-        });
+                const result = await newCartItem.save();
+                res.status(200).send({
+                    message: "Item added to cart successfully!",
+                    data: result
+                });
+            } else {
+                res.status(400).send('This item is alraedy exists in cart!');
+            }
+
+        } catch (err) {
+            res.status(500).send(err.message);
+
+        }
+
 
     })
     .get(authenticated, async (req, res) => {

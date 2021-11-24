@@ -14,86 +14,27 @@ const router = express.Router();
 //
 const Profile = mongoose.model('Profile', profileSchema);
 
+
 router.route('/')
-    .post(authenticated, async (req, res) => {
-        const form = new formidable.IncomingForm();
-        form.keepExtensions = true;
-
-        form.parse(req, (err, fields, files) => {
-            const profile = new Profile(_.pick(fields, ['user', 'phone', 'address']));
-            if (files.photo) {
-                fs.readFile(files.photo.path, (err, data) => {
-                    if (!err) {
-                        profile.photo.data = data;
-                        profile.photo.contentType = files.photo.type;
-                    }
-                    profile.save((err, result) => {
-                        if (!err) {
-                            res.status(201).send({
-                                data: _.pick(result, ['user', 'phone', 'address'])
-                            })
-                        } else {
-                            res.status(400).send('Server error');
-                        }
-                    })
-                })
-            } else {
-                res.status(400).send('No image provided!');
-            }
-        })
-    });
-
-router.route('/:id')
     .get(authenticated, async (req, res) => {
-        const profileId = req.params.id;
-        const profile = await Profile.findById(profileId)
-            .select({ photo: 0 })
-            .populate('user', 'name');
-        if (!profile) res.status(404).send('Profile Not Found');
-        return res.status(200).send(service);
+        const userId = req.user._id;
+        const profile = await Profile.findOne({ user: userId });
+        return res.status(200).send(profile);
     })
-    .put(authenticated, async (req, res) => {
-        const profileId = req.params.id;
-        const profile = await Service.find({
-            _id: profileId,
-            userId: req.user._id
-        });
+    .post(authenticated, async (req, res) => {
+        const userId = req.user._id;
+        const userProfile = _.pick(req.body, ['phone', 'address', 'city', 'postcode', 'country']);
+        userProfile['user'] = userId;
 
-        const form = new formidable.IncomingForm();
-        form.keepExtensions = true;
+        let profile = await Profile.findOne({ user: userId });
+        if (profile) {
+            await Profile.updateOne({ user: userId }, userProfile);
+        } else {
+            const profile = new Profile(userProfile);
+            await profile.save();
+        }
+        return res.status(200).send(" Updated Successfully!");
+    })
 
-        form.parse(req, async (err, fields, files) => {
-            if (err) return res.status(400).send('Something went wrong!');
-            const updatedFields = _.pick(fields, ['phone', 'address']);
-
-            _.assignIn(profile, updatedFields);
-
-            if (files.photo) {
-                fs.readFile(files.photo.path, async (err, data) => {
-                    if (err) return res.status(400).send('Something went wrong');
-
-                    profile.photo.data = data;
-                    profile.photo.contentType = files.photo.type;
-
-                    try {
-                        await profile.save();
-                        res.status(200).send('Profile updated successfully');
-
-                    } catch (err) {
-                        res.status(400).send('Update failed!');
-                    }
-
-                })
-            } else {
-                try {
-                    await profile.save();
-                    res.status(200).send('Profile updated successfully');
-
-                } catch (err) {
-                    res.status(400).send('Update failed!');
-                }
-            }
-        })
-    });
 
 module.exports = router;
