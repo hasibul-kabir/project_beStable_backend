@@ -37,7 +37,7 @@ router.route('/signup')
             }
 
         } catch (err) {
-            res.status(500).send('registrattion failed');
+            res.status(500).send('registration failed');
 
         }
 
