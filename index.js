@@ -16,6 +16,9 @@ const categoryRouter = require('./routers/categoryRouter');
 const serviceRouter = require('./routers/serviceRouter');
 const cartRouter = require('./routers/cartRouter');
 const profileRouter = require('./routers/profileRouter');
+const conversationsRouter = require('./routers/conversationsRouter');
+const messagesRouter = require('./routers/messagesRouter');
+const complaintsRouter = require('./routers/complaintsRouter');
 
 dotenv.config();
 //module scaffolding 
@@ -39,6 +42,9 @@ app.use('/category', categoryRouter);
 app.use('/service', serviceRouter);
 app.use('/cart', cartRouter);
 app.use('/profile', profileRouter);
+app.use('/conversations', conversationsRouter);
+app.use('/messages', messagesRouter);
+app.use('/complaints', complaintsRouter);
 
 
 //Error handling middleware

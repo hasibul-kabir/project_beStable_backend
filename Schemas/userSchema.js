@@ -17,6 +17,19 @@ const userSchema = mongoose.Schema({
         maxlength: 255,
         unique: true
     },
+    phone: {
+        type: String,
+        required: true,
+        minlength: 11,
+        maxlength: 15,
+        unique: true
+    },
+    address: {
+        type: String,
+        required: true,
+        minlength: 5,
+        maxlength: 1500,
+    },
     password: {
         type: String,
         required: true,

@@ -26,18 +26,20 @@ router.route('/signup')
                 const newUser = new User({
                     name: req.body.name,
                     email: req.body.email,
+                    phone: req.body.phone,
+                    address: req.body.address,
                     password: hashedPass,
                     role: req.body.role
                 })
                 await newUser.save();
-                res.status(200).send('Registration Successful!')
+                res.status(200).send('নিবন্ধন সফল হয়েছে!')
 
             } else {
-                res.status(400).send('User alraedy exist');
+                res.status(400).send('ইতিমধ্যে এই নামে নিবন্ধন করা আছে!');
             }
 
         } catch (err) {
-            res.status(500).send('registration failed');
+            res.status(500).send('নিবন্ধন ব্যার্থ হয়েছে!');
 
         }
 
@@ -57,6 +59,8 @@ router.route('/signin')
                         userName: user.name,
                         userId: user._id,
                         email: user.email,
+                        phone: user.phone,
+                        address: user.address,
                         role: user.role,
 
                     },
@@ -65,18 +69,18 @@ router.route('/signin')
                     );
 
                     return res.status(200).json({
-                        userData: _.pick(user, ['_id', 'name', 'email', 'role']),
+                        userData: _.pick(user, ['_id', 'name', 'email', 'phone', 'address', 'role']),
                         access_token: token,
-                        message: "Signin Successful!"
+                        message: "সাইনইন সফল হয়েছে!"
                     })
                 } else {
                     res.status(401).json({
-                        error: "password is not valid"
+                        error: "ইমেইল বা পাসওয়ার্ড সঠিক নয়"
                     });
                 }
             } else {
                 res.status(401).json({
-                    error: "Authentication failed"
+                    error: "ইমেইল বা পাসওয়ার্ড সঠিক নয়"
                 });
             }
 
@@ -85,5 +89,16 @@ router.route('/signin')
         }
     });
 
+router.get('/', async (req, res) => {
+    const userId = req.query.userId;
+    const userName = req.query.userName;
 
+    try {
+        const user = userId ? await User.findById(userId) : await User.findOne({ username: userName });
+        res.status(200).send(user);
+
+    } catch (err) {
+        res.status(500).send(err);
+    }
+})
 module.exports = router;

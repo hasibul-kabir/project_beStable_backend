@@ -8,13 +8,13 @@ const serviceSchema = mongoose.Schema({
         type: String,
         required: true,
         minlength: 5,
-        maxlength: 50
+        maxlength: 200
     },
     description: {
         type: String,
         required: true,
         minlength: 10,
-        maxlength: 500
+        maxlength: 2000
     },
     price: {
         type: Number,

@@ -63,7 +63,7 @@ router.route('/:id')
         const service = await Service.findById(serviceId)
             .select({ photo: 0 })
             .populate('category', 'name')
-            .populate('seller', 'name');
+            .populate('seller');
         if (!service) res.status(404).send('Service Not Found');
         return res.status(200).send(service);
     })
